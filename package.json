@@ -1,7 +1,7 @@
 {
   "name": "blockyard",
   "description": "AI-native premium Ghost theme for BLOCKYARD",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "engines": {
     "ghost": ">=5.0.0"
   },
@@ -22,18 +22,6 @@
     },
     "card_assets": {
       "exclude": ["bookmark"]
-    },
-    "custom": {
-      "accent_color": {
-        "type": "color",
-        "default": "#7C5CFF",
-        "description": "Primary accent color (violet)"
-      },
-      "typography": {
-        "type": "select",
-        "options": ["Modern Serif", "Editorial Sans"],
-        "default": "Editorial Sans"
-      }
     }
   }
 }
