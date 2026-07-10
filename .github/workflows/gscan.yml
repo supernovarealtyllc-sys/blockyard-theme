@@ -1,0 +1,19 @@
+name: gscan
+
+# Ghost's official theme linter. Fails the PR/push on any gscan error.
+# No dependency cache: this job only runs `npx gscan` (no npm/pnpm install),
+# and the repo ships no lockfile, so `cache:` would fail setup-node.
+
+on: [pull_request, push]
+
+jobs:
+  gscan:
+    name: gscan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate theme with gscan
+        run: npx --yes gscan .
