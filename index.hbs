@@ -1,0 +1,27 @@
+{{!< default}}
+
+{{#is "home"}}
+<section class="hero">
+    <div class="container-narrow">
+        <span class="overline">AI-native premium</span>
+        <h1>{{@site.title}}</h1>
+        <p class="hero-subtitle">{{@site.description}}</p>
+        {{#unless @member}}
+        <form class="subscribe-form" data-members-form="signup">
+            <input type="email" name="email" placeholder="your@email.com" required aria-label="Email" />
+            <button type="submit">Subscribe</button>
+        </form>
+        {{/unless}}
+    </div>
+</section>
+{{/is}}
+
+<section class="container">
+    <div class="post-grid">
+        {{#foreach posts}}
+            {{> "post-card"}}
+        {{/foreach}}
+    </div>
+
+    {{pagination}}
+</section>

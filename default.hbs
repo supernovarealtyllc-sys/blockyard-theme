@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="{{@site.locale}}">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+
+    <title>{{meta_title}}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" />
+
+    <link rel="stylesheet" type="text/css" href="{{asset "css/main.css"}}" />
+
+    {{ghost_head}}
+</head>
+<body class="{{body_class}}">
+
+    <header class="site-header">
+        <div class="container site-header-inner">
+            <a class="site-brand" href="{{@site.url}}">BLOCKYARD</a>
+            <nav class="site-nav">
+                {{navigation}}
+                {{#unless @member}}
+                    <a class="subscribe-btn" href="#/portal/signup">Subscribe</a>
+                {{else}}
+                    <a class="subscribe-btn" href="#/portal/account">Account</a>
+                {{/unless}}
+            </nav>
+        </div>
+    </header>
+
+    <main class="site-main">
+        {{{body}}}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <a href="{{@site.url}}" class="footer-brand">BLOCKYARD</a>
+                    <p class="footer-tagline">{{@site.description}}</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Explore</h4>
+                    <ul>
+                        <li><a href="{{@site.url}}">Home</a></li>
+                        <li><a href="{{@site.url}}/tag/analysis">Analysis</a></li>
+                        <li><a href="{{@site.url}}/tag/builds">Builds</a></li>
+                        <li><a href="{{@site.url}}/authors">Authors</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Follow</h4>
+                    <ul>
+                        {{#if @site.twitter}}<li><a href="https://twitter.com/{{@site.twitter}}" target="_blank" rel="noopener">Twitter</a></li>{{/if}}
+                        <li><a href="{{@site.url}}/rss/" target="_blank" rel="noopener">RSS</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div>&copy; {{date format="YYYY"}} BLOCKYARD</div>
+                <div>Published with Ghost</div>
+            </div>
+        </div>
+    </footer>
+
+    {{ghost_foot}}
+</body>
+</html>

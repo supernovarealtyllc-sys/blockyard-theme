@@ -1,0 +1,54 @@
+{{!< default}}
+
+<article class="post-full">
+    <header class="post-full-header container">
+        <div class="post-full-meta">
+            {{#if primary_tag}}<a class="post-card-tag" href="{{primary_tag.url}}">{{primary_tag.name}}</a> · {{/if}}
+            <time datetime="{{date format="YYYY-MM-DD"}}">{{date format="MMMM D, YYYY"}}</time>
+            <span aria-hidden="true">·</span>
+            <span>{{reading_time}}</span>
+        </div>
+        <h1>{{title}}</h1>
+        {{#if custom_excerpt}}<p class="hero-subtitle">{{custom_excerpt}}</p>{{/if}}
+    </header>
+
+    {{#if feature_image}}
+    <figure class="post-full-image">
+        <img
+            srcset="{{img_url feature_image size="m"}} 750w,
+                    {{img_url feature_image size="l"}} 1140w,
+                    {{img_url feature_image size="xl"}} 2000w"
+            sizes="(max-width: 1140px) 100vw, 1140px"
+            src="{{img_url feature_image size="l"}}"
+            alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
+        />
+        {{#if feature_image_caption}}<figcaption>{{feature_image_caption}}</figcaption>{{/if}}
+    </figure>
+    {{/if}}
+
+    <div class="post-full-content container-narrow">
+        {{content}}
+    </div>
+
+    {{#foreach authors}}
+    <div class="post-author container-narrow">
+        {{#if profile_image}}<img class="post-author-avatar" src="{{profile_image}}" alt="{{name}}" />{{/if}}
+        <div>
+            <div class="post-author-name">{{name}}</div>
+            {{#if bio}}<p class="post-author-bio">{{bio}}</p>{{/if}}
+        </div>
+    </div>
+    {{/foreach}}
+</article>
+
+{{!-- Read next --}}
+<section class="container" style="padding: 80px 0;">
+    <h3 class="overline" style="text-align:center; margin-bottom: 32px;">Read next</h3>
+    <div class="post-grid">
+        {{#get "posts" filter="id:-{{id}}+tag:{{primary_tag.slug}}" limit="3"}}
+            {{#foreach posts}}
+                {{> "post-card"}}
+            {{/foreach}}
+        {{/get}}
+    </div>
+</section>

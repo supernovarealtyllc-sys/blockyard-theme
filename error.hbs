@@ -1,0 +1,12 @@
+{{!< default}}
+
+<section class="hero" style="min-height: 60vh; display:flex; align-items:center;">
+    <div class="container-narrow" style="text-align:center;">
+        <span class="overline">Error {{statusCode}}</span>
+        <h1>{{message.filename}}{{^message.filename}}Page not found{{/message.filename}}</h1>
+        <p class="hero-subtitle">{{message.text}}</p>
+        <div style="margin-top:32px;">
+            <a class="subscribe-btn" href="{{@site.url}}">Back home</a>
+        </div>
+    </div>
+</section>

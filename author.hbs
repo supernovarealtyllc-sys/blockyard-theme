@@ -1,0 +1,21 @@
+{{!< default}}
+
+<section class="hero">
+    <div class="container-narrow" style="text-align:center;">
+        {{#if author.profile_image}}
+            <img src="{{author.profile_image}}" alt="{{author.name}}" style="width:96px;height:96px;border-radius:50%;margin:0 auto 24px;" />
+        {{/if}}
+        <span class="overline">Author</span>
+        <h1>{{author.name}}</h1>
+        {{#if author.bio}}<p class="hero-subtitle">{{author.bio}}</p>{{/if}}
+    </div>
+</section>
+
+<section class="container">
+    <div class="post-grid">
+        {{#foreach posts}}
+            {{> "post-card"}}
+        {{/foreach}}
+    </div>
+    {{pagination}}
+</section>

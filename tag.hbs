@@ -1,0 +1,18 @@
+{{!< default}}
+
+<section class="hero">
+    <div class="container-narrow">
+        <span class="overline">Topic</span>
+        <h1>{{tag.name}}</h1>
+        {{#if tag.description}}<p class="hero-subtitle">{{tag.description}}</p>{{/if}}
+    </div>
+</section>
+
+<section class="container">
+    <div class="post-grid">
+        {{#foreach posts}}
+            {{> "post-card"}}
+        {{/foreach}}
+    </div>
+    {{pagination}}
+</section>
