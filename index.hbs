@@ -2,22 +2,25 @@
 
 {{#is "home"}}
 <section class="hero">
-    <div class="container-narrow">
-        <span class="overline">AI-native premium</span>
-        <h1>{{@site.title}}</h1>
-        <p class="hero-subtitle">{{@site.description}}</p>
-        {{#unless @member}}
-        <form class="subscribe-form" data-members-form="signup">
-            <input type="email" name="email" placeholder="your@email.com" required aria-label="Email" />
-            <button type="submit">Subscribe</button>
-        </form>
-        {{/unless}}
+    <div class="container">
+        <div class="hero-inner">
+            <span class="kicker">A weekly dispatch from the yard</span>
+            <h1 class="hero-title">The operators, capital, and code rebuilding the <span class="accent">block</span>.</h1>
+            <p class="hero-dek">Field notes on proptech, wholesale, capital, and the trading stack — from the operators actually building it.</p>
+            {{#unless @member}}
+            <a class="hero-cta" href="#/portal/signup" data-portal="signup">Subscribe <span class="arrow" aria-hidden="true">&rarr;</span></a>
+            {{/unless}}
+        </div>
     </div>
 </section>
 {{/is}}
 
-<section class="container">
-    <div class="post-grid">
+<section class="container feed">
+    <div class="section-head">
+        <h2>Latest</h2>
+        <span class="kicker kicker--muted">The feed</span>
+    </div>
+    <div class="post-grid{{#is "home"}} post-grid--home{{/is}}">
         {{#foreach posts}}
             {{> "post-card"}}
         {{/foreach}}

@@ -3,13 +3,13 @@
 <article class="post-full">
     <header class="post-full-header container">
         <div class="post-full-meta">
-            {{#if primary_tag}}<a class="post-card-tag" href="{{primary_tag.url}}">{{primary_tag.name}}</a> · {{/if}}
+            {{#if primary_tag}}<a class="post-card-kicker" href="{{primary_tag.url}}">{{primary_tag.name}}</a><span class="sep">/</span>{{/if}}
             <time datetime="{{date format="YYYY-MM-DD"}}">{{date format="MMMM D, YYYY"}}</time>
-            <span aria-hidden="true">·</span>
+            <span class="sep">/</span>
             <span>{{reading_time}}</span>
         </div>
-        <h1>{{title}}</h1>
-        {{#if custom_excerpt}}<p class="hero-subtitle">{{custom_excerpt}}</p>{{/if}}
+        <h1 class="post-full-title">{{title}}</h1>
+        {{#if custom_excerpt}}<p class="post-full-dek">{{custom_excerpt}}</p>{{/if}}
     </header>
 
     {{#if feature_image}}
@@ -30,6 +30,12 @@
         {{content}}
     </div>
 
+    {{#if tags}}
+    <div class="post-tags">
+        {{#foreach tags}}<a class="post-tag-chip" href="{{url}}">{{name}}</a>{{/foreach}}
+    </div>
+    {{/if}}
+
     {{#foreach authors}}
     <div class="post-author container-narrow">
         {{#if profile_image}}<img class="post-author-avatar" src="{{profile_image}}" alt="{{name}}" />{{/if}}
@@ -42,13 +48,18 @@
 </article>
 
 {{!-- Read next --}}
-<section class="container" style="padding: 80px 0;">
-    <h3 class="overline" style="text-align:center; margin-bottom: 32px;">Read next</h3>
+{{#get "posts" filter="id:-{{id}}+tags:[{{#if primary_tag}}{{primary_tag.slug}}{{else}}{{tags.[0].slug}}{{/if}}]" limit="3" as |related|}}
+{{#if related}}
+<section class="container read-next">
+    <div class="section-head">
+        <h2>Read next</h2>
+        <span class="kicker kicker--muted">{{#if primary_tag}}More in {{primary_tag.name}}{{else}}From the yard{{/if}}</span>
+    </div>
     <div class="post-grid">
-        {{#get "posts" filter="id:-{{id}}+tag:{{primary_tag.slug}}" limit="3"}}
-            {{#foreach posts}}
-                {{> "post-card"}}
-            {{/foreach}}
-        {{/get}}
+        {{#foreach related}}
+            {{> "post-card"}}
+        {{/foreach}}
     </div>
 </section>
+{{/if}}
+{{/get}}
