@@ -1,14 +1,21 @@
 # BLOCKYARD — Ghost Theme
 
-AI-native premium theme for the **BLOCKYARD** publication. Editorial, spacious,
-high-contrast. Custom-built on a Casper-derived structure with the BLOCKYARD
-design system applied.
+AI-native premium theme for the **BLOCKYARD** publication. Dark editorial,
+spacious, high-contrast — an intentional publication, not a SaaS blog.
 
-- **Wordmark:** BLOCKYARD — all caps, letter-spaced `0.24em`
-- **Accent:** `#7C5CFF` (violet) — the only accent color
-- **Body:** Inter · **Display:** Fraunces (variable serif) — via Google Fonts
-- **Themes:** light + dark (pure CSS, `prefers-color-scheme`)
-- **Ghost:** `>=5.0.0` · **gscan:** 0 errors
+- **Wordmark:** BLOCKYARD — all caps, letter-spaced `0.26em`
+- **Accent:** `#7C5CFF` (violet) — the only accent, rationed to CTAs, active nav, kicker labels, and focus rings
+- **Body:** Inter · **Display:** Fraunces (variable serif) · **Editorial mono:** JetBrains Mono — via Google Fonts
+- **Base:** committed dark (near-black `#0A0A0F`)
+- **Ghost:** `>=5.0.0` · **gscan:** 0 errors / 0 warnings
+
+## What's new in 0.2.1 (facelift)
+
+- **Confident type ramp** — Fraunces headlines at 52–96px (hero) / 40–56px (post title); Inter body at 19px/1.72; JetBrains Mono for kickers, date lines, and captions.
+- **Borderless cards** — the colored-border/shadow grid is gone; cards separate on whitespace, a mono accent kicker, and type contrast alone.
+- **Repaced hero** — issue kicker, one large accented headline, a two-line dek, and a single CTA with ≥96px top / ≥120px to the feed.
+- **Reading-optimized posts** — 680px measure, drop cap, left-rule Fraunces-italic pull quotes, JetBrains Mono code on a subtle (non-neon) surface, tag chips, byline, related strip.
+- **Accent restraint** — violet removed from card borders, card hovers, and generic link hovers; body links now use a subtle underline. Committed dark base replaces the light-default + `prefers-color-scheme` split.
 
 ## Structure
 

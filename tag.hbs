@@ -1,14 +1,18 @@
 {{!< default}}
 
-<section class="hero">
-    <div class="container-narrow">
-        <span class="overline">Topic</span>
-        <h1>{{tag.name}}</h1>
-        {{#if tag.description}}<p class="hero-subtitle">{{tag.description}}</p>{{/if}}
-    </div>
+{{#tag}}
+<section class="masthead container">
+    <span class="kicker">Section</span>
+    <h1>{{name}}</h1>
+    {{#if description}}<p class="masthead-dek">{{description}}</p>{{/if}}
 </section>
+{{/tag}}
 
-<section class="container">
+<section class="container feed">
+    <div class="section-head">
+        <h2>In this section</h2>
+        <span class="kicker kicker--muted">{{plural pagination.total empty='No posts' singular='% post' plural='% posts'}}</span>
+    </div>
     <div class="post-grid">
         {{#foreach posts}}
             {{> "post-card"}}
