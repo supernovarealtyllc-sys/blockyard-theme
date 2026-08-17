@@ -9,6 +9,24 @@ spacious, high-contrast — an intentional publication, not a SaaS blog.
 - **Base:** committed dark (near-black `#0A0A0F`)
 - **Ghost:** `>=5.0.0` · **gscan:** 0 errors / 0 warnings
 
+## What's new in 0.3.0 (conversion + SEO/AEO)
+
+- **One button system** — `.btn-primary` / `.btn-secondary` / `.link-arrow` with a consistent
+  directional-arrow language (→ forward, ↓ on-page, ↗ external), ≥44px touch targets,
+  and one visible focus ring everywhere.
+- **Embedded newsletter forms** — native members forms (no Portal round-trip) in the hero,
+  at the end of every post/page, and in the footer; loading/success/error states included.
+  Header CTA is now "Subscribe free"; share row (X / LinkedIn / copy link) on posts.
+- **Structured data** — site-wide Organization + WebSite graph, BreadcrumbList on
+  post/tag/author routes, BlogPosting entity enrichment (author byline links, `about`
+  brand tag), ProfilePage + sameAs on byline pages, CollectionPage on sections.
+- **Typeset polish** — `text-wrap: balance` headlines / `pretty` body, hyphenation,
+  full element coverage (tables, h4–h6, definition lists, footnotes, mark/kbd/abbr),
+  dark-styled editor cards (callout, toggle, button, signup, header, gallery, file).
+- **Fixes** — footer "Sections" now lists real tags by post count (no more 404 links),
+  styled pagination ("Older/Newer dispatches"), skip link, reduced-motion + print support,
+  eager-loaded LCP images with `fetchpriority`.
+
 ## What's new in 0.2.1 (facelift)
 
 - **Confident type ramp** — Fraunces headlines at 52–96px (hero) / 40–56px (post title); Inter body at 19px/1.72; JetBrains Mono for kickers, date lines, and captions.
@@ -127,9 +145,11 @@ Google Fonts CDN.
 
 ## Members / Portal
 
-- Header **Subscribe / Account** buttons use `data-portal="signup|account"` (opens
+- Header **Subscribe free / Account** buttons use `data-portal="signup|account"` (opens
   the Portal modal in place) with a `#/portal/...` href fallback.
-- Hero email form uses `data-members-form="signup"`.
+- Embedded email forms (hero, end-of-content, footer) use `data-members-form="signup"`
+  and post directly to `/members/api/send-magic-link/` — see the script block in
+  `default.hbs`. Success/error/loading states are class-driven (`.is-success` etc.).
 - Tiered pricing (`pricing.hbs` with `data-portal="signup/<tier-id>"`) is not
   included — add it once tier IDs exist.
 

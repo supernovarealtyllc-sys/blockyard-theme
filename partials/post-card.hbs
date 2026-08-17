@@ -1,16 +1,35 @@
 <article class="post-card">
-    {{#if feature_image}}
-    <a class="post-card-image" href="{{url}}" aria-label="{{title}}">
-        <img
-            srcset="{{img_url feature_image size="s"}} 400w,
-                    {{img_url feature_image size="m"}} 750w,
-                    {{img_url feature_image size="l"}} 1140w"
-            sizes="(max-width: 860px) 100vw, 33vw"
-            src="{{img_url feature_image size="m"}}"
-            alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
-            loading="lazy"
-        />
-    </a>
+    {{!-- eager is a partial hash param (eager=true on the first card of a feed).
+          It must be read at partial top level — Ghost's hbs drops partial hash
+          params inside nested blocks, so the eager check wraps feature_image. --}}
+    {{#if eager}}
+        {{#if feature_image}}
+        <a class="post-card-image" href="{{url}}" aria-label="{{title}}" tabindex="-1">
+            <img
+                srcset="{{img_url feature_image size="s"}} 400w,
+                        {{img_url feature_image size="m"}} 750w,
+                        {{img_url feature_image size="l"}} 1140w"
+                sizes="(max-width: 860px) 100vw, 33vw"
+                src="{{img_url feature_image size="m"}}"
+                alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
+                loading="eager" fetchpriority="high" decoding="async"
+            />
+        </a>
+        {{/if}}
+    {{else}}
+        {{#if feature_image}}
+        <a class="post-card-image" href="{{url}}" aria-label="{{title}}" tabindex="-1">
+            <img
+                srcset="{{img_url feature_image size="s"}} 400w,
+                        {{img_url feature_image size="m"}} 750w,
+                        {{img_url feature_image size="l"}} 1140w"
+                sizes="(max-width: 860px) 100vw, 33vw"
+                src="{{img_url feature_image size="m"}}"
+                alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
+                loading="lazy" decoding="async"
+            />
+        </a>
+        {{/if}}
     {{/if}}
     <div class="post-card-body">
         {{#if primary_tag}}

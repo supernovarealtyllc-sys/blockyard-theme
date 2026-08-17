@@ -1,5 +1,41 @@
 {{!< default}}
 
+{{#post}}
+{{!-- BreadcrumbList + BlogPosting enrichment (entity coherence for search/AI engines).
+      Ghost core emits its own Article schema via ghost_head; this block adds the
+      breadcrumb trail and the author/about entity links the publication needs. --}}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{@site.url}}" }{{#if primary_tag}},
+                { "@type": "ListItem", "position": 2, "name": "{{primary_tag.name}}", "item": "{{#primary_tag}}{{url absolute="true"}}{{/primary_tag}}" },
+                { "@type": "ListItem", "position": 3, "name": "{{title}}", "item": "{{url absolute="true"}}" }{{else}},
+                { "@type": "ListItem", "position": 2, "name": "{{title}}", "item": "{{url absolute="true"}}" }{{/if}}
+            ]
+        },
+        {
+            "@type": "BlogPosting",
+            "@id": "{{url absolute="true"}}",
+            "mainEntityOfPage": "{{url absolute="true"}}",
+            "inLanguage": "{{@site.locale}}",
+            "isAccessibleForFree": true,
+            {{#if primary_tag}}"about": { "@type": "Thing", "name": "{{primary_tag.name}}" },{{/if}}
+            "author": [
+                {{#foreach authors}}
+                { "@type": "Person", "name": "{{name}}", "url": "{{url absolute="true"}}" }{{#unless @last}},{{/unless}}
+                {{/foreach}}
+            ],
+            "publisher": { "@id": "{{@site.url}}#organization" },
+            "isPartOf": { "@id": "{{@site.url}}#website" }
+        }
+    ]
+}
+</script>
+
 <article class="post-full">
     <header class="post-full-header container">
         <div class="post-full-meta">
@@ -21,6 +57,7 @@
             sizes="(max-width: 1140px) 100vw, 1140px"
             src="{{img_url feature_image size="l"}}"
             alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
+            loading="eager" fetchpriority="high" decoding="async"
         />
         {{#if feature_image_caption}}<figcaption>{{feature_image_caption}}</figcaption>{{/if}}
     </figure>
@@ -30,6 +67,10 @@
         {{content}}
     </div>
 
+    {{> "subscribe-cta"}}
+
+    {{> "post-share"}}
+
     {{#if tags}}
     <div class="post-tags">
         {{#foreach tags}}<a class="post-tag-chip" href="{{url}}">{{name}}</a>{{/foreach}}
@@ -38,7 +79,7 @@
 
     {{#foreach authors}}
     <div class="post-author container-narrow">
-        {{#if profile_image}}<img class="post-author-avatar" src="{{profile_image}}" alt="{{name}}" />{{/if}}
+        {{#if profile_image}}<img class="post-author-avatar" src="{{img_url profile_image size="xs"}}" alt="{{name}}" loading="lazy" decoding="async" />{{/if}}
         <div>
             <div class="post-author-name">{{name}}</div>
             {{#if bio}}<p class="post-author-bio">{{bio}}</p>{{/if}}
@@ -63,3 +104,4 @@
 </section>
 {{/if}}
 {{/get}}
+{{/post}}

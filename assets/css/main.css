@@ -1,11 +1,19 @@
-/* BLOCKYARD — Ghost theme v0.2.1
+/* BLOCKYARD — Ghost theme v0.3.0
  * Facelift: dark editorial publication. Confident Fraunces type ramp, Inter reading
  * body, JetBrains Mono editorial details. Violet (#7C5CFF) is the ONLY accent and is
  * rationed — CTAs, active nav, kicker labels, one hero mark, focus rings. Cards are
  * borderless; separation is whitespace + kicker + type contrast.
+ *
+ * v0.3.0: conversion + SEO/AEO pass — one button system (primary/secondary/arrow-link
+ * with consistent directional arrows), embedded native members signup forms (hero,
+ * end-of-content, footer), structured-data graph, balanced/pretty text wrapping,
+ * dark-styled editor cards, styled pagination, focus-visible + reduced-motion +
+ * print support.
  */
 
 :root {
+  color-scheme: dark;
+
   /* Accent — the single brand color, used sparingly */
   --accent: #7C5CFF;
   --accent-hover: #957BFF;
@@ -51,6 +59,9 @@
 
   --tx-fast: 140ms cubic-bezier(0.2, 0, 0.2, 1);
   --tx-base: 260ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Functional state color (errors only — not an accent) */
+  --error: #F27070;
 }
 
 /* ---------- Reset ---------- */
@@ -70,6 +81,26 @@ body {
 img { max-width: 100%; height: auto; display: block; }
 a { color: var(--ink-900); text-decoration: none; transition: color var(--tx-fast); }
 
+::selection { background: rgba(124, 92, 255, 0.34); color: #fff; }
+
+/* One visible focus ring everywhere — keyboard users never lose their place */
+a:focus-visible, button:focus-visible, input:focus-visible,
+summary:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Skip link — first tab stop on every page */
+.skip-link {
+  position: absolute; left: 16px; top: -64px; z-index: 200;
+  padding: 10px 18px; border-radius: 999px;
+  background: var(--accent); color: #fff;
+  font-size: 14px; font-weight: 600;
+  transition: top var(--tx-fast);
+}
+.skip-link:focus-visible { top: 12px; outline-color: #fff; }
+
 /* ---------- Typography ---------- */
 h1, h2, h3, h4 {
   font-family: var(--font-display);
@@ -79,10 +110,12 @@ h1, h2, h3, h4 {
   line-height: 1.08;
   margin: 0 0 0.5em;
   font-optical-sizing: auto;
+  text-wrap: balance;  /* no orphaned words on headlines */
 }
 h2 { font-size: clamp(1.9rem, 1.3rem + 2vw, 2.6rem); }
 h3 { font-size: clamp(1.35rem, 1.1rem + 1vw, 1.7rem); }
-p { margin: 0 0 1.5em; }
+p { margin: 0 0 1.5em; text-wrap: pretty; }
+li, dd { text-wrap: pretty; }
 
 /* Kicker — the editorial signal. Mono, tracked, accent-tinted. */
 .kicker {
@@ -136,13 +169,37 @@ p { margin: 0 0 1.5em; }
   content: ""; position: absolute; left: 0; right: 0; bottom: -2px;
   height: 2px; background: var(--accent);
 }
-.subscribe-btn {
-  padding: 10px 22px; border-radius: 999px;
-  background: var(--accent); color: #fff !important;
-  font-size: 14px; font-weight: 600; letter-spacing: 0.01em;
-  transition: background var(--tx-fast), transform var(--tx-fast);
+/* ---------- Button system ----------
+ * One hierarchy, used consistently across every page:
+ *   .btn-primary   — THE action of the page (accent fill). Max one per viewport.
+ *   .btn-secondary — alternative route (outline). e.g. browse instead of subscribe.
+ *   .link-arrow    — low-emphasis direction (text + arrow). Arrow shows direction:
+ *                    → forward/continue · ↓ on-page anchor · ↗ external.
+ * All buttons: ≥44px touch target, pill radius, visible focus ring (global rule).
+ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 44px; padding: 12px 26px; border-radius: 999px;
+  font-family: var(--font-body); font-size: 15px; font-weight: 600; letter-spacing: 0.01em;
+  border: 1px solid transparent; cursor: pointer; text-decoration: none;
+  transition: background var(--tx-fast), transform var(--tx-fast),
+              border-color var(--tx-fast), color var(--tx-fast);
 }
-.subscribe-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent-hover); color: #fff; transform: translateY(-1px); }
+.btn-secondary { background: transparent; color: var(--ink-950); border-color: var(--ink-300); }
+.btn-secondary:hover { border-color: var(--ink-950); color: var(--ink-950); transform: translateY(-1px); }
+.btn-sm { min-height: 40px; padding: 9px 20px; font-size: 14px; }
+.btn .arrow { transition: transform var(--tx-fast); }
+.btn:hover .arrow { transform: translateX(3px); }
+
+.link-arrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 15px; font-weight: 600; color: var(--ink-950);
+}
+.link-arrow .arrow { color: var(--accent); transition: transform var(--tx-fast); }
+.link-arrow:hover .arrow { transform: translateX(3px); }
 
 /* ---------- Mobile nav toggle + panel ---------- */
 .site-nav-toggle {
@@ -192,12 +249,7 @@ p { margin: 0 0 1.5em; }
 .site-mobile-nav a:hover { color: var(--ink-950); }
 .site-mobile-nav .nav-current a,
 .site-mobile-nav a.active { color: var(--accent); }
-.subscribe-btn-mobile {
-  display: block;
-  margin-top: 14px;
-  text-align: center;
-  padding: 12px 20px !important;
-}
+.site-mobile-nav .btn { display: flex; margin-top: 14px; }
 .site-header-open .site-mobile-nav { display: block; max-height: 480px; }
 body.site-nav-open { overflow: hidden; }
 
@@ -219,16 +271,11 @@ body.site-nav-open { overflow: hidden; }
   font-size: var(--text-dek); line-height: 1.5; font-weight: 400;
   color: var(--ink-700); max-width: 46ch; margin: 0 0 36px;
 }
-.hero-cta {
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 15px 28px; border-radius: 999px;
-  background: var(--accent); color: #fff;
-  font-weight: 600; font-size: 15px;
-  transition: background var(--tx-fast), transform var(--tx-fast);
+/* Hero conversion row: embedded form (primary) + on-page anchor (secondary) */
+.hero-actions {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 20px;
 }
-.hero-cta:hover { background: var(--accent-hover); color: #fff; transform: translateY(-1px); }
-.hero-cta .arrow { transition: transform var(--tx-fast); }
-.hero-cta:hover .arrow { transform: translateX(3px); }
+.hero-actions .link-arrow { font-size: 14px; }
 
 /* Section head (Latest / Read next) */
 .section-head {
@@ -334,7 +381,7 @@ body.site-nav-open { overflow: hidden; }
   max-width: var(--measure-read); margin: 0 auto;
   font-size: var(--text-body); line-height: 1.72; color: var(--ink-900);
 }
-.post-full-content > p:first-of-type::first-letter {
+.post-full-content > p:first-child::first-letter {
   float: left; font-family: var(--font-display); font-weight: 500;
   font-size: 3.6em; line-height: 0.82; padding: 0.02em 0.12em 0 0; color: var(--ink-950);
 }
@@ -426,10 +473,10 @@ body.site-nav-open { overflow: hidden; }
   font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.04em; color: var(--ink-500);
 }
 
-/* ---------- Subscribe form ---------- */
-.subscribe-form { display: flex; gap: 10px; max-width: 460px; margin: 36px 0 0; }
+/* ---------- Subscribe form (embedded, native members API) ---------- */
+.subscribe-form { display: flex; flex-wrap: wrap; gap: 10px; max-width: 480px; margin: 0; }
 .subscribe-form input {
-  flex: 1; padding: 14px 18px;
+  flex: 1 1 220px; min-height: 52px; padding: 14px 20px;
   border: 1px solid var(--ink-100); border-radius: 999px;
   font-size: 15px; font-family: inherit;
   background: var(--surface-raised); color: var(--ink-950);
@@ -439,12 +486,109 @@ body.site-nav-open { overflow: hidden; }
   outline: none; border-color: var(--accent);
   box-shadow: 0 0 0 4px var(--accent-muted);  /* sanctioned accent: focus ring */
 }
-.subscribe-form button {
-  padding: 14px 26px; background: var(--accent); color: #fff;
-  border: none; border-radius: 999px; font-size: 15px; font-weight: 600; cursor: pointer;
-  transition: background var(--tx-fast);
+.subscribe-form .btn { min-height: 52px; flex-shrink: 0; }
+.subscribe-form .btn-loading { display: none; }
+.subscribe-form.is-loading .btn-label { display: none; }
+.subscribe-form.is-loading .btn-loading { display: inline; }
+.subscribe-form.is-loading .btn { opacity: 0.75; pointer-events: none; }
+.subscribe-form-note {
+  flex-basis: 100%; margin: 2px 0 0;
+  font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.06em;
+  color: var(--ink-500);
 }
-.subscribe-form button:hover { background: var(--accent-hover); }
+.subscribe-form-message {
+  flex-basis: 100%; display: none; margin: 6px 0 0;
+  font-size: 14px; line-height: 1.5; color: var(--ink-900);
+}
+.subscribe-form-message .marker { font-weight: 700; margin-right: 4px; }
+.subscribe-form-success .marker { color: var(--accent); }
+.subscribe-form-error { color: var(--error); }
+.subscribe-form.is-success .subscribe-form-success { display: block; }
+.subscribe-form.is-error .subscribe-form-error { display: block; }
+.subscribe-form.is-success input,
+.subscribe-form.is-success button,
+.subscribe-form.is-success .subscribe-form-note { display: none; }
+
+/* ---------- End-of-content subscribe CTA ---------- */
+.subscribe-cta {
+  margin: clamp(56px, 8vw, 88px) auto 0;
+  padding: clamp(36px, 5vw, 56px);
+  background: var(--surface-raised);
+  border: 1px solid var(--ink-100);
+  border-radius: var(--radius-lg);
+}
+.subscribe-cta .kicker { margin-bottom: 16px; }
+.subscribe-cta-title {
+  font-size: clamp(1.75rem, 1.3rem + 1.8vw, 2.4rem);
+  margin: 0 0 14px;
+}
+.subscribe-cta-dek { color: var(--ink-700); max-width: 46ch; margin: 0 0 26px; }
+
+/* ---------- Footer CTA + grid ---------- */
+.footer-cta {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  gap: 40px; flex-wrap: wrap;
+  padding-bottom: 48px; margin-bottom: 48px;
+  border-bottom: 1px solid var(--ink-100);
+}
+.footer-cta-copy { max-width: 480px; }
+.footer-cta-title { font-size: clamp(1.9rem, 1.4rem + 2vw, 2.6rem); margin: 14px 0 12px; }
+.footer-cta .subscribe-form { flex: 1 1 320px; max-width: 420px; }
+
+/* ---------- Share row (posts) ---------- */
+.post-share {
+  display: flex; align-items: center; gap: 16px;
+  margin: clamp(32px, 4vw, 44px) auto 0;
+}
+.post-share-label {
+  font-family: var(--font-mono); font-size: 0.6875rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500);
+}
+.post-share-buttons { display: flex; gap: 10px; }
+.share-btn {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid var(--ink-100); background: transparent;
+  color: var(--ink-700); cursor: pointer;
+  transition: color var(--tx-fast), border-color var(--tx-fast), transform var(--tx-fast);
+}
+.share-btn:hover { color: var(--ink-950); border-color: var(--ink-300); transform: translateY(-1px); }
+.share-btn svg { width: 16px; height: 16px; fill: currentColor; }
+.share-btn.is-copied { color: var(--accent); border-color: var(--accent); }
+.share-copied {
+  position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
+  padding: 3px 10px; border-radius: 999px;
+  background: var(--surface-raised); border: 1px solid var(--ink-100);
+  font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--accent);
+  opacity: 0; pointer-events: none; transition: opacity var(--tx-fast);
+}
+.share-btn.is-copied .share-copied { opacity: 1; }
+
+/* ---------- Author archive links ---------- */
+.author-links { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 22px; }
+.author-links:empty { display: none; }
+.author-links .link-arrow { font-size: 14px; }
+
+/* ---------- Pagination ---------- */
+.pagination {
+  display: flex; align-items: center; justify-content: center; gap: 28px;
+  margin-top: clamp(56px, 8vw, 88px);
+  font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em;
+}
+.pagination .page-number { color: var(--ink-500); text-transform: uppercase; }
+.pagination-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--ink-950); font-weight: 500; text-transform: uppercase;
+}
+.pagination-link .arrow { color: var(--accent); transition: transform var(--tx-fast); }
+.pagination-link:hover { color: var(--accent); }
+.pagination-older:hover .arrow { transform: translateX(3px); }
+.pagination-newer:hover .arrow { transform: translateX(-3px); }
+
+/* ---------- Error page actions ---------- */
+.error-actions { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
 
 /* ---------- Error ---------- */
 .error-page { min-height: 66vh; display: flex; align-items: center; text-align: center; }
@@ -484,6 +628,132 @@ body.site-nav-open { overflow: hidden; }
 .kg-bookmark-thumbnail img { width: 100%; height: 100%; object-fit: cover; }
 @media (max-width: 640px) { .kg-bookmark-thumbnail { display: none; } }
 
+/* ---------- Extended content typeset ---------- */
+.post-full-content { overflow-wrap: break-word; }
+.post-full-content p { hyphens: auto; }
+.post-full-content h4 {
+  font-size: 1.15rem; margin: 1.6em 0 0.5em; letter-spacing: -0.01em;
+}
+.post-full-content h5,
+.post-full-content h6 {
+  font-family: var(--font-body); font-size: 0.95rem; font-weight: 700;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  margin: 1.6em 0 0.5em; color: var(--ink-950);
+}
+.post-full-content table {
+  display: block; width: 100%; overflow-x: auto;
+  border-collapse: collapse; margin: 2em 0; font-size: 0.9375rem;
+}
+.post-full-content th {
+  font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-500); text-align: left;
+  padding: 10px 14px; border-bottom: 1px solid var(--ink-300); white-space: nowrap;
+}
+.post-full-content td {
+  padding: 12px 14px; border-bottom: 1px solid var(--ink-100); color: var(--ink-800);
+}
+.post-full-content mark {
+  background: var(--accent-muted); color: var(--ink-950);
+  padding: 1px 5px; border-radius: 3px;
+}
+.post-full-content kbd {
+  font-family: var(--font-mono); font-size: 0.85em;
+  background: var(--surface-raised); border: 1px solid var(--ink-100);
+  border-bottom-width: 2px; border-radius: 4px; padding: 2px 6px;
+}
+.post-full-content abbr[title] {
+  text-decoration: underline dotted; text-underline-offset: 3px; cursor: help;
+}
+.post-full-content sub, .post-full-content sup { font-size: 0.75em; line-height: 0; }
+.post-full-content dl { margin: 0 0 1.5em; }
+.post-full-content dt { font-weight: 600; color: var(--ink-950); margin-top: 1em; }
+.post-full-content dd { margin: 0.25em 0 0 1.2em; color: var(--ink-800); }
+
+/* Footnotes (Ghost's footnote output) */
+.post-full-content .footnotes {
+  font-size: 0.875rem; color: var(--ink-700);
+  border-top: 1px solid var(--ink-100); margin-top: 3em; padding-top: 1.5em;
+}
+.post-full-content .footnotes ol { padding-left: 1.2em; margin: 0; }
+.post-full-content .footnotes li { margin-bottom: 0.4em; }
+.post-full-content sup a, .post-full-content .footnote-backref {
+  color: var(--accent); text-decoration: none;
+}
+
+/* ---------- Editor cards: dark-theme overrides ----------
+ * Ghost injects its own card CSS after the theme stylesheet, so these rules
+ * carry the .post-full-content prefix (and !important where cards use inline
+ * or high-specificity styles) to keep every card on the dark surface.
+ */
+.post-full-content .kg-callout-card {
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 20px 24px; margin: 2.2em 0;
+  background: var(--surface-raised);
+  border: 1px solid var(--ink-100);
+  border-left: 2px solid var(--accent);
+  border-radius: var(--radius-md);
+}
+.post-full-content .kg-callout-card div.kg-callout-text {
+  color: var(--ink-900); font-size: 1rem; line-height: 1.6;
+}
+.post-full-content .kg-toggle-card {
+  border: 1px solid var(--ink-100); border-radius: var(--radius-md);
+  padding: 18px 22px; margin: 2em 0; background: var(--surface-raised);
+  box-shadow: none;
+}
+.post-full-content .kg-toggle-card .kg-toggle-heading h4 { margin: 0; font-size: 1.1rem; }
+.post-full-content .kg-toggle-card .kg-toggle-content { margin-top: 12px; color: var(--ink-800); }
+.post-full-content .kg-button-card { margin: 2em 0; }
+.post-full-content .kg-button-card .kg-btn {
+  display: inline-flex; align-items: center; min-height: 46px;
+  padding: 12px 26px; border-radius: 999px;
+  background: var(--accent); color: #fff; font-weight: 600;
+  transition: background var(--tx-fast), transform var(--tx-fast);
+}
+.post-full-content .kg-button-card .kg-btn:hover { background: var(--accent-hover); color: #fff; transform: translateY(-1px); }
+.post-full-content .kg-button-card.kg-align-center { text-align: center; }
+.post-full-content .kg-signup-card {
+  background: var(--surface-raised) !important;
+  border: 1px solid var(--ink-100) !important;
+  border-radius: var(--radius-lg) !important;
+  color: var(--ink-900) !important;
+}
+.post-full-content .kg-signup-card h2,
+.post-full-content .kg-signup-card h3 { color: var(--ink-950) !important; }
+.post-full-content .kg-signup-card .kg-signup-card-text { color: var(--ink-700) !important; }
+.post-full-content .kg-signup-card input {
+  background: var(--surface) !important; color: var(--ink-950) !important;
+  border: 1px solid var(--ink-100) !important; border-radius: 999px !important;
+}
+.post-full-content .kg-signup-card .kg-signup-card-button,
+.post-full-content .kg-signup-card button {
+  background: var(--accent) !important; color: #fff !important;
+  border-radius: 999px !important;
+}
+.post-full-content .kg-header-card { border-radius: var(--radius-lg); overflow: hidden; }
+.post-full-content .kg-gallery-grid { gap: 12px; }
+.post-full-content .kg-gallery-image img { border-radius: var(--radius-sm); }
+.post-full-content .kg-file-card-contents { color: var(--ink-950); }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- Print ---------- */
+@media print {
+  .site-header, .site-footer, .subscribe-cta, .post-share,
+  .read-next, .skip-link { display: none !important; }
+  body { background: #fff; color: #000; font-size: 12pt; }
+  h1, h2, h3, h4, .post-full-content, .post-full-title,
+  .post-full-content strong { color: #000; }
+  .post-full-content a { color: #000; text-decoration: underline; }
+}
+
 /* ---------- Mobile ---------- */
 @media (max-width: 720px) {
   .container, .container-narrow { padding: 0 22px; }
@@ -491,5 +761,12 @@ body.site-nav-open { overflow: hidden; }
   .site-nav-toggle { display: block; }
   .post-grid { gap: 44px; }
   .footer-grid { grid-template-columns: 1fr; gap: 36px; }
-  .post-full-content > p:first-of-type::first-letter { font-size: 3em; }
+  .post-full-content > p:first-child::first-letter { font-size: 3em; }
+  .footer-cta { flex-direction: column; align-items: flex-start; gap: 28px; }
+  .footer-cta .subscribe-form { width: 100%; max-width: none; }
+  .subscribe-cta { padding: 30px 24px; }
+  .subscribe-form input { flex-basis: 100%; }
+  .subscribe-form .btn { width: 100%; }
+  .post-share { flex-wrap: wrap; }
+  .pagination { gap: 18px; font-size: 0.6875rem; }
 }

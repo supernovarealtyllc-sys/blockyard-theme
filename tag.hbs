@@ -1,6 +1,32 @@
 {{!< default}}
 
 {{#tag}}
+{{!-- BreadcrumbList + CollectionPage: tag pages are the section hubs
+      (renttrust.ai, loantrust.ai, ...) and need their own entity surface. --}}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{@site.url}}" },
+                { "@type": "ListItem", "position": 2, "name": "{{name}}", "item": "{{url absolute="true"}}" }
+            ]
+        },
+        {
+            "@type": "CollectionPage",
+            "@id": "{{url absolute="true"}}",
+            "url": "{{url absolute="true"}}",
+            "name": "{{name}} — {{@site.title}}",
+            {{#if description}}"description": "{{description}}",{{/if}}
+            "isPartOf": { "@id": "{{@site.url}}#website" },
+            "inLanguage": "{{@site.locale}}"
+        }
+    ]
+}
+</script>
+
 <section class="masthead container">
     <span class="kicker">Section</span>
     <h1>{{name}}</h1>
@@ -15,7 +41,7 @@
     </div>
     <div class="post-grid">
         {{#foreach posts}}
-            {{> "post-card"}}
+            {{#if @first}}{{> "post-card" eager=true}}{{else}}{{> "post-card"}}{{/if}}
         {{/foreach}}
     </div>
     {{pagination}}

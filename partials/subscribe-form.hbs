@@ -1,0 +1,22 @@
+{{!--
+  Embedded newsletter signup — native Ghost members form.
+  Usage: {{> "subscribe-form"}}
+  Posts to /members/api/send-magic-link/ (JS in default.hbs). No Portal dependency,
+  no page reload. States: .is-loading / .is-success / .is-error on the form element.
+  Falls back to the Portal modal when members are disabled.
+--}}
+{{#if @site.members_enabled}}
+<form class="subscribe-form" data-members-form="signup" novalidate>
+    <input data-members-email type="email" name="email" placeholder="you@example.com"
+           required autocomplete="email" enterkeyhint="go" aria-label="Email address" />
+    <button class="btn btn-primary" type="submit">
+        <span class="btn-label">Get the dispatch</span>
+        <span class="btn-loading" aria-hidden="true">Sending&hellip;</span>
+    </button>
+    <p class="subscribe-form-note">Free. No spam. Unsubscribe anytime.</p>
+    <p class="subscribe-form-message subscribe-form-success" role="status"><span class="marker" aria-hidden="true">&#10003;</span> Check your inbox &mdash; confirm your subscription and you&rsquo;re on the list.</p>
+    <p class="subscribe-form-message subscribe-form-error" role="alert"><span class="marker" aria-hidden="true">&#10005;</span> That address didn&rsquo;t go through &mdash; check it and try again.</p>
+</form>
+{{else}}
+<a class="btn btn-primary" href="#/portal/signup" data-portal="signup">Subscribe free <span class="arrow" aria-hidden="true">&rarr;</span></a>
+{{/if}}
