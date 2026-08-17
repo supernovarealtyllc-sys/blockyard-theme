@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta name="theme-color" content="#0A0A0F" />
 
     <title>{{meta_title}}</title>
 
@@ -16,19 +17,62 @@
 
     <link rel="stylesheet" type="text/css" href="{{asset "css/main.css"}}" />
 
+    {{!-- Site-wide entity graph: Organization + WebSite (Ghost core only emits Article
+          schema on posts). Feeds entity coherence for search + AI answer engines. --}}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "Organization",
+                "@id": "{{@site.url}}#organization",
+                {{#if @site.twitter}}
+                    {{#if @site.facebook}}
+                "sameAs": ["https://twitter.com/{{@site.twitter}}", "https://www.facebook.com/{{@site.facebook}}"],
+                    {{else}}
+                "sameAs": ["https://twitter.com/{{@site.twitter}}"],
+                    {{/if}}
+                {{else}}
+                    {{#if @site.facebook}}
+                "sameAs": ["https://www.facebook.com/{{@site.facebook}}"],
+                    {{/if}}
+                {{/if}}
+                "name": "{{@site.title}}",
+                "url": "{{@site.url}}",
+                "description": "{{@site.description}}",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "{{@site.url}}assets/images/apple-touch-icon.png"
+                }
+            },
+            {
+                "@type": "WebSite",
+                "@id": "{{@site.url}}#website",
+                "url": "{{@site.url}}",
+                "name": "{{@site.title}}",
+                "description": "{{@site.description}}",
+                "publisher": { "@id": "{{@site.url}}#organization" },
+                "inLanguage": "{{@site.locale}}"
+            }
+        ]
+    }
+    </script>
+
     {{ghost_head}}
 </head>
 <body class="{{body_class}}">
 
+    <a class="skip-link" href="#site-main">Skip to content</a>
+
     <header class="site-header">
         <div class="container site-header-inner">
-            <a class="site-brand" href="{{@site.url}}">BLOCKYARD</a>
-            <nav class="site-nav">
+            <a class="site-brand" href="{{@site.url}}" aria-label="BLOCKYARD — home">BLOCKYARD</a>
+            <nav class="site-nav" aria-label="Primary">
                 {{navigation}}
                 {{#unless @member}}
-                    <a class="subscribe-btn" href="#/portal/signup" data-portal="signup">Subscribe</a>
+                    <a class="btn btn-primary btn-sm" href="#/portal/signup" data-portal="signup">Subscribe free</a>
                 {{else}}
-                    <a class="subscribe-btn" href="#/portal/account" data-portal="account">Account</a>
+                    <a class="btn btn-primary btn-sm" href="#/portal/account" data-portal="account">Account</a>
                 {{/unless}}
             </nav>
             <button class="site-nav-toggle" type="button" aria-controls="site-mobile-nav" aria-expanded="false" aria-label="Menu">
@@ -37,24 +81,34 @@
                 <span class="site-nav-toggle-bar"></span>
             </button>
         </div>
-        <nav id="site-mobile-nav" class="site-mobile-nav" aria-hidden="true">
+        <nav id="site-mobile-nav" class="site-mobile-nav" aria-hidden="true" aria-label="Mobile">
             <div class="container">
                 {{navigation}}
                 {{#unless @member}}
-                    <a class="subscribe-btn subscribe-btn-mobile" href="#/portal/signup" data-portal="signup">Subscribe</a>
+                    <a class="btn btn-primary" href="#/portal/signup" data-portal="signup">Subscribe free</a>
                 {{else}}
-                    <a class="subscribe-btn subscribe-btn-mobile" href="#/portal/account" data-portal="account">Account</a>
+                    <a class="btn btn-primary" href="#/portal/account" data-portal="account">Account</a>
                 {{/unless}}
             </div>
         </nav>
     </header>
 
-    <main class="site-main">
+    <main class="site-main" id="site-main">
         {{{body}}}
     </main>
 
     <footer class="site-footer">
         <div class="container">
+            {{#unless @member}}
+            <div class="footer-cta">
+                <div class="footer-cta-copy">
+                    <span class="kicker">The dispatch</span>
+                    <h2 class="footer-cta-title">Never miss a dispatch.</h2>
+                    <p class="footer-tagline">{{@site.description}}</p>
+                </div>
+                {{> "subscribe-form"}}
+            </div>
+            {{/unless}}
             <div class="footer-grid">
                 <div>
                     <a href="{{@site.url}}" class="footer-brand">BLOCKYARD</a>
@@ -63,18 +117,29 @@
                 <div class="footer-col">
                     <h4>Sections</h4>
                     <ul>
-                        <li><a href="{{@site.url}}/tag/field-notes/">Field Notes</a></li>
-                        <li><a href="{{@site.url}}/tag/operators/">Operators</a></li>
-                        <li><a href="{{@site.url}}/tag/capital/">Capital</a></li>
-                        <li><a href="{{@site.url}}/tag/code/">Code</a></li>
+                        {{#get "tags" filter="visibility:public" limit="5" order="count.posts desc"}}
+                            {{#foreach tags}}
+                        <li><a href="{{url}}">{{name}}</a></li>
+                            {{/foreach}}
+                        {{/get}}
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Publication</h4>
+                    <ul>
+                        <li><a href="{{@site.url}}">Home</a></li>
+                        <li><a href="{{@site.url}}/about/">About</a></li>
+                        {{#unless @member}}<li><a href="#/portal/signup" data-portal="signup">Subscribe</a></li>{{/unless}}
+                        {{#if @member}}<li><a href="#/portal/account" data-portal="account">Account</a></li>{{/if}}
+                        <li><a href="#/portal/signin" data-portal="signin">Sign in</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
                     <h4>Follow</h4>
                     <ul>
-                        {{#if @site.twitter}}<li><a href="https://twitter.com/{{@site.twitter}}" target="_blank" rel="noopener">Twitter</a></li>{{/if}}
+                        {{#if @site.twitter}}<li><a href="https://twitter.com/{{@site.twitter}}" target="_blank" rel="noopener me">X (Twitter)</a></li>{{/if}}
+                        {{#if @site.facebook}}<li><a href="https://www.facebook.com/{{@site.facebook}}" target="_blank" rel="noopener me">Facebook</a></li>{{/if}}
                         <li><a href="{{@site.url}}/rss/" target="_blank" rel="noopener">RSS</a></li>
-                        <li><a href="#/portal/signup" data-portal="signup">Subscribe</a></li>
                     </ul>
                 </div>
             </div>
@@ -87,42 +152,107 @@
 
     <script>
     (function () {
+        /* ---------- Mobile nav ---------- */
         var toggle = document.querySelector('.site-nav-toggle');
         var panel = document.getElementById('site-mobile-nav');
         var header = document.querySelector('.site-header');
-        if (!toggle || !panel || !header) return;
+        if (toggle && panel && header) {
+            function setOpen(open) {
+                toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+                header.classList.toggle('site-header-open', open);
+                document.body.classList.toggle('site-nav-open', open);
+            }
 
-        function setOpen(open) {
-            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-            panel.setAttribute('aria-hidden', open ? 'false' : 'true');
-            header.classList.toggle('site-header-open', open);
-            document.body.classList.toggle('site-nav-open', open);
+            toggle.addEventListener('click', function (e) {
+                e.stopPropagation();
+                setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+            });
+
+            panel.addEventListener('click', function (e) {
+                if (e.target.tagName === 'A') setOpen(false);
+            });
+
+            document.addEventListener('click', function (e) {
+                if (toggle.getAttribute('aria-expanded') !== 'true') return;
+                if (!panel.contains(e.target) && !toggle.contains(e.target)) setOpen(false);
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+                    setOpen(false);
+                    toggle.focus();
+                }
+            });
+
+            window.addEventListener('resize', function () {
+                if (window.innerWidth > 720 && toggle.getAttribute('aria-expanded') === 'true') setOpen(false);
+            });
         }
 
-        toggle.addEventListener('click', function (e) {
-            e.stopPropagation();
-            setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+        /* ---------- Embedded newsletter forms (native members API) ---------- */
+        var forms = document.querySelectorAll('form[data-members-form]');
+        Array.prototype.forEach.call(forms, function (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var emailInput = form.querySelector('[data-members-email]');
+                var email = emailInput && emailInput.value ? emailInput.value.trim() : '';
+                if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    form.classList.remove('is-success', 'is-loading');
+                    form.classList.add('is-error');
+                    if (emailInput) emailInput.focus();
+                    return;
+                }
+                form.classList.remove('is-success', 'is-error');
+                form.classList.add('is-loading');
+                fetch('/members/api/send-magic-link/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: email,
+                        emailType: 'subscribe',
+                        autoRedirect: false
+                    })
+                }).then(function (res) {
+                    form.classList.remove('is-loading');
+                    if (res.ok) {
+                        form.classList.add('is-success');
+                        emailInput.value = '';
+                    } else {
+                        form.classList.add('is-error');
+                    }
+                }).catch(function () {
+                    form.classList.remove('is-loading');
+                    form.classList.add('is-error');
+                });
+            });
         });
 
-        panel.addEventListener('click', function (e) {
-            if (e.target.tagName === 'A') setOpen(false);
-        });
-
-        document.addEventListener('click', function (e) {
-            if (toggle.getAttribute('aria-expanded') !== 'true') return;
-            if (!panel.contains(e.target) && !toggle.contains(e.target)) setOpen(false);
-        });
-
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
-                setOpen(false);
-                toggle.focus();
-            }
-        });
-
-        window.addEventListener('resize', function () {
-            if (window.innerWidth > 720 && toggle.getAttribute('aria-expanded') === 'true') setOpen(false);
-        });
+        /* ---------- Copy-link share button ---------- */
+        var copyBtn = document.querySelector('[data-share-copy]');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', function () {
+                var url = copyBtn.getAttribute('data-share-copy');
+                function done() {
+                    copyBtn.classList.add('is-copied');
+                    setTimeout(function () { copyBtn.classList.remove('is-copied'); }, 2000);
+                }
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(url).then(done, done);
+                } else {
+                    var tmp = document.createElement('textarea');
+                    tmp.value = url;
+                    tmp.setAttribute('readonly', '');
+                    tmp.style.position = 'absolute';
+                    tmp.style.left = '-9999px';
+                    document.body.appendChild(tmp);
+                    tmp.select();
+                    try { document.execCommand('copy'); } catch (err) {}
+                    document.body.removeChild(tmp);
+                    done();
+                }
+            });
+        }
     })();
     </script>
 

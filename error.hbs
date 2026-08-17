@@ -5,6 +5,8 @@
         <div class="error-code">ERROR {{statusCode}}</div>
         <h1 class="error-title">This block isn&rsquo;t on the yard.</h1>
         <p class="error-dek">{{message.text}}{{^message.text}}The page you&rsquo;re after moved, shipped, or never existed. Head back to the feed and pick up the dispatch.{{/message.text}}</p>
-        <a class="hero-cta" href="{{@site.url}}">Back to the yard <span class="arrow" aria-hidden="true">&rarr;</span></a>
+        <div class="error-actions">
+            <a class="btn btn-primary" href="{{@site.url}}">Back to the yard <span class="arrow" aria-hidden="true">&rarr;</span></a>
+        </div>
     </div>
 </section>

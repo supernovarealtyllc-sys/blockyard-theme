@@ -1,0 +1,10 @@
+{{!-- Custom pagination — Ghost uses this partial automatically for {{pagination}}. --}}
+<nav class="pagination" aria-label="Pagination">
+    {{#if prev}}
+    <a class="pagination-link pagination-newer" href="{{page_url prev}}"><span class="arrow" aria-hidden="true">&larr;</span> Newer dispatches</a>
+    {{/if}}
+    <span class="page-number" aria-current="page">Page {{page}} of {{pages}}</span>
+    {{#if next}}
+    <a class="pagination-link pagination-older" href="{{page_url next}}">Older dispatches <span class="arrow" aria-hidden="true">&rarr;</span></a>
+    {{/if}}
+</nav>
